@@ -1,0 +1,4 @@
+1. At first, run (npm install)
+2. run (npm run build) in terminal to compile typescript to javascript
+3. add .env folder and fill it by .env.example folder (insert your database information)
+4. run (npm run dev) to start a development server
