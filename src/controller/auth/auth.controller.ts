@@ -43,6 +43,7 @@ export const changePassword: RequestHandler = async (
   const newPassword = request.body["newPassword"];
 
   const authService = new AuthService();
+
   const userExsts = await authService.getUser(userName);
   if (userExsts && currentPassword == userExsts.password) {
     const passwordChanged = await authService.changePassword(
