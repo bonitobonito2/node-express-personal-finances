@@ -4,6 +4,7 @@ import { dbConfig } from "./database/db.config";
 import { createConnection } from "typeorm";
 import authRouter from "./routes/auth.routes";
 import bodyParser from "body-parser";
+import CategoryRouter from "./routes/category.routes";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -23,3 +24,5 @@ const app: Application = express();
 app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
+
+app.use("/category", CategoryRouter);
