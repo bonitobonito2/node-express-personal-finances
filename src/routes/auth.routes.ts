@@ -15,4 +15,5 @@ authRouter.post("/registration", validateRegistration, registration);
 authRouter.post("/login", loginValidation, login);
 
 authRouter.post("/change-password", changePasswordValidate, changePassword);
+
 export default authRouter;
