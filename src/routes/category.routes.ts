@@ -4,6 +4,12 @@ import { createCategoryValidate } from "../requestValidations/category/createCat
 
 const CategoryRouter = express.Router();
 
+CategoryRouter.use((req, res, next) => {
+  next();
+});
+
 CategoryRouter.post("/create", createCategoryValidate, createCategory);
+
+CategoryRouter.put("/changeName/:id");
 
 export default CategoryRouter;
