@@ -1,23 +1,23 @@
-import express, { Application } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
-import { dbConfig } from "./database/db.config";
-import { createConnection } from "typeorm";
 import authRouter from "./routes/auth.routes";
 import bodyParser from "body-parser";
 import CategoryRouter from "./routes/category.routes";
+import { myDataSource } from "./database/db.config";
 
 dotenv.config();
 const port = process.env.PORT;
 
-createConnection(dbConfig)
+myDataSource
+  .initialize()
   .then(() => {
-    console.log("Connected to database");
+    console.log("Connected to database!");
     app.listen(port, (): void => {
       console.log("SERVER IS UP ON PORT:", port);
     });
   })
-  .catch((error) => {
-    console.log("Error connecting to database:", error);
+  .catch((err) => {
+    console.error("Error during Data Source initialization:", err);
   });
 
 const app: Application = express();
@@ -27,7 +27,6 @@ app.use("/auth", authRouter);
 
 app.use("/category", CategoryRouter);
 
-app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(500).json(err.message);
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  return res.status(500).json(err.message);
 });
