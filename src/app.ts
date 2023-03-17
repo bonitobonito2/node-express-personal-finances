@@ -26,3 +26,8 @@ app.use(bodyParser.json());
 app.use("/auth", authRouter);
 
 app.use("/category", CategoryRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(500).json(err.message);
+});
