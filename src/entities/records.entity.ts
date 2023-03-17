@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Category } from "./category.entity";
 import { RecordTypeEnum } from "../enums/records.enum";
+import { Process } from "../enums/process.enum";
 
 @Entity("records")
 export class Records {
@@ -16,7 +17,7 @@ export class Records {
   @Column()
   price: string;
 
-  @Column()
+  @Column({ enum: Process })
   process: string;
 
   @Column({ enum: RecordTypeEnum })
