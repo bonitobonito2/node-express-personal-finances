@@ -1,10 +1,11 @@
 import { Category } from "../entities/category.entity";
 import { User } from "../entities/user.entity";
 import { myDataSource } from "../database/db.config";
+import { Records } from "../entities/records.entity";
 export class CategoryService {
   public categoryRepo = myDataSource.getRepository(Category);
   public userRepo = myDataSource.getRepository(User);
-
+  public recordRepo = myDataSource.getRepository(Records);
   public async changeCategoryNameById(
     id: number,
     newCategoryName: string
@@ -15,7 +16,7 @@ export class CategoryService {
     if (await this.categoryRepo.save(category)) return true;
     return false;
   }
-  public async createCategory(categoryName: string, user: User) {
+  public async createCategoryAndCheck(categoryName: string, user: User) {
     const categoryExsists = await this.userRepo.find({
       relations: {
         category: true,
@@ -30,6 +31,14 @@ export class CategoryService {
 
     if (categoryExsists.length) return "category already exsists";
 
+    const category = new Category();
+    category.categoryName = categoryName;
+    category.user = user;
+
+    return await this.categoryRepo.save(category);
+  }
+
+  public async createCategory(categoryName: string, user: User) {
     const category = new Category();
     category.categoryName = categoryName;
     category.user = user;
@@ -75,5 +84,12 @@ export class CategoryService {
     } catch (err) {
       throw new Error(err);
     }
+  }
+
+  public async deleteCategory(category: Category, record: Array<Records>) {
+    record.map(async (data) => {
+      await this.recordRepo.delete({ id: data.id });
+    });
+    return await this.categoryRepo.delete(category);
   }
 }
