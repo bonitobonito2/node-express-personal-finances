@@ -28,4 +28,27 @@ export class RecordService {
     createRecord.category = category;
     await this.recordRepo.save(createRecord);
   }
+
+  public async getRecordsByCategory(catgory: Category) {
+    const records = await this.recordRepo.find({
+      relations: {
+        category: true,
+      },
+      where: {
+        category: catgory,
+      },
+    });
+
+    return records;
+  }
+
+  public async moveRecordsToDefaultCategory(
+    records: Array<Records>,
+    category: Category
+  ) {
+    records.map(async (data) => {
+      data.category = category;
+      await this.recordRepo.save(data);
+    });
+  }
 }
