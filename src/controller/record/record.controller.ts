@@ -35,10 +35,8 @@ export const createRecord: RequestHandler = async (request, response, next) => {
           `record created in ${userHasCategory.categoryName} category `
         );
       } else {
-        const createDefaultCategory = await categoryService.createCategory(
-          "default",
-          userExsists
-        );
+        const createDefaultCategory =
+          await categoryService.createCategoryAndCheck("default", userExsists);
         if (typeof createDefaultCategory !== "string") {
           //default category doesnot exsists for this user
           await recordService.createRecord(
@@ -80,6 +78,6 @@ export const createRecord: RequestHandler = async (request, response, next) => {
       throw new Error("user doesnt exsists or password is incorrect");
     }
   } catch (err) {
-    next(new Error(err));
+    next(err);
   }
 };
