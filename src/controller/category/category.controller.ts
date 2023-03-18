@@ -23,7 +23,7 @@ export const createCategory: RequestHandler = async (
         userExsists
       );
       if (createCategory == "category already exsists")
-        return response.status(403).json("category already exsists");
+        return response.status(402).json("category already exsists");
 
       return response
         .status(200)
@@ -32,6 +32,47 @@ export const createCategory: RequestHandler = async (
       return response.status(403).json("username or password is uncorrect");
     }
   } catch (err) {
-    next(new Error(err));
+    next(err);
+  }
+};
+
+export const changeCategoryName: RequestHandler = async (
+  request,
+  response,
+  next
+) => {
+  const userName = request.body["userName"];
+  const password = request.body["password"];
+  const newCategoryName = request.body["newCategoryName"];
+
+  const categoryId = parseInt(request.params.id);
+  const categoryService = new CategoryService();
+  const authService = new AuthService();
+
+  try {
+    const userExsists = await authService.getUser(userName);
+    if (userExsists.password == password) {
+      const categoryExsists = await categoryService.userHasCategory(
+        categoryId,
+        userExsists
+      );
+      if (categoryExsists) {
+        await categoryService.changeCategoryNameById(
+          categoryId,
+          newCategoryName
+        );
+
+        return response.json(
+          `category name changed with id ${categoryId} changed to ${newCategoryName}`
+        );
+      } else {
+        return response
+          .status(403)
+          .json(`you dont have category with the id (${categoryId})`);
+      }
+    }
+    return response.status(401).json("your userName or password is incorrect");
+  } catch (err) {
+    next(err);
   }
 };
