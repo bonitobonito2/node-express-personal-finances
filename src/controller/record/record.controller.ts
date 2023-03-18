@@ -49,7 +49,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
             createDefaultCategory
           );
           return response.json(
-            "created default category and added in default due to category field with given name doesnot exsists or  is undefined"
+            "created default category and added record in default due to category field with given name doesnot exsists or  is undefined"
           );
         } else {
           // default category already exsists for this user
@@ -70,7 +70,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
             getCategory
           );
           response.json(
-            "added in default  category due to category field with given name doesnot exsists or  is undefined"
+            "added record in default  category due to category field with given name doesnot exsists or  is undefined"
           );
         }
       }
