@@ -9,20 +9,17 @@ export class Records {
   id: number;
 
   @Column()
-  categoryName: string;
-
-  @Column()
   descriotion: string;
 
   @Column()
   price: string;
 
-  @Column({ enum: Process })
+  @Column({ enum: Process, nullable: true })
   process: string;
 
   @Column({ enum: RecordTypeEnum })
   type: RecordTypeEnum;
 
   @ManyToOne(() => Category, (user) => user.record)
-  category: Category[];
+  category: Category;
 }
