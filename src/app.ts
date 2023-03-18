@@ -37,7 +37,7 @@ app.use((req: Request, res, next) => {
     req["decoded"] = decoded;
     next();
   } catch (Err) {
-    res.status(401).send(Err);
+    return res.status(401).send(Err);
   }
 });
 app.use("/category", CategoryRouter);
