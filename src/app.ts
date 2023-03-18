@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.routes";
 import bodyParser from "body-parser";
 import CategoryRouter from "./routes/category.routes";
 import { myDataSource } from "./database/db.config";
+import RecordRouter from "./routes/record.routes";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -26,6 +27,8 @@ app.use(bodyParser.json());
 app.use("/auth", authRouter);
 
 app.use("/category", CategoryRouter);
+
+app.use("/record", RecordRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json(err.message);
