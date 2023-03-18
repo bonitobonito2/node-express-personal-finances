@@ -1,5 +1,3 @@
-import { getRepository } from "typeorm";
-
 import { Category } from "../entities/category.entity";
 import { User } from "../entities/user.entity";
 import { myDataSource } from "../database/db.config";
@@ -36,7 +34,7 @@ export class CategoryService {
     category.categoryName = categoryName;
     category.user = user;
 
-    await this.categoryRepo.save(category);
+    return await this.categoryRepo.save(category);
   }
 
   public async userHasCategory(
@@ -51,6 +49,26 @@ export class CategoryService {
         },
       });
       if (categoryExsists) {
+        return categoryExsists;
+      }
+      return false;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  public async userHasCategoryByName(
+    categoryName: string,
+    user: User
+  ): Promise<Category | boolean> {
+    try {
+      const categoryExsists = await this.categoryRepo.findOne({
+        where: {
+          user: user,
+          categoryName: categoryName,
+        },
+      });
+      if (categoryExsists && categoryName !== undefined) {
         return categoryExsists;
       }
       return false;
