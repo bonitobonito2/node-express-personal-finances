@@ -22,8 +22,15 @@ export class RecordService {
     createRecord.descriotion = record.descriotion;
     createRecord.price = record.price;
     createRecord.type = record.type;
+    console.log("wtf");
     if (record.type == "outcome") {
-      createRecord.process = record.process;
+      console.log("aqvar");
+      console.log(record.process);
+      if (record.process == undefined)
+        throw new Error(
+          "outcome record needs to have a process, [Processing, Completed]"
+        );
+      createRecord.status = record?.process;
     }
     createRecord.category = category;
     await this.recordRepo.save(createRecord);

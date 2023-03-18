@@ -3,11 +3,12 @@
 3. add .env file and fill it by .env.example file (insert your database information)
 4. run (npm run dev) to start a development server
 
-HOW TO USE APP CORECTLY: 
+HOW TO USE APP CORECTLY:
+
 1. send post request on yourPort/auth/registration, enter userName and password in body (craete account)
 2. send post request on yourPort/auth/login, enter your userName and password, if everything is correct
-you will get your private jwt token, which u need on protected routes.
+   you will get your private jwt token, which u need on protected routes.
 3. create category, send POST request on yourPort/category/create. inser your token in request header (Bearer Token) because you need user to create a category,
-and in body {"categoryName" : yourCategoryName}.
+   and in body {"categoryName" : yourCategoryName}.
 4. insert records in your category, use your token same as in last stap, and than POST youtPort/record/create, fill the body like this
-{"categoryName" : ,"description": , "price": , "type":"outcome", "process" : } note : categoryName and process is not required. 
+   {"categoryName" : ,"description": , "price": , "type":"outcome", "process" :[Processing, Completed]} note : categoryName, process key not required when type is income.

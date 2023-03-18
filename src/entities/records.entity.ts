@@ -15,7 +15,7 @@ export class Records {
   price: string;
 
   @Column({ enum: Process, nullable: true })
-  process: string;
+  status: string;
 
   @Column({ enum: RecordTypeEnum })
   type: RecordTypeEnum;
