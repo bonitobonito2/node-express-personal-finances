@@ -20,5 +20,5 @@ export class Category {
   user: User;
 
   @OneToMany(() => Records, (category) => category.category)
-  record: Records;
+  record: Records[];
 }
