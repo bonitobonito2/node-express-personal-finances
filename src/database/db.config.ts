@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
 import { User } from "../entities/user.entity";
-import { ConnectionOptions } from "typeorm";
+import { DataSource } from "typeorm";
 import { Category } from "../entities/category.entity";
 import { Records } from "../entities/records.entity";
 dotenv.config();
-export const dbConfig: ConnectionOptions = {
+
+export const myDataSource = new DataSource({
   type: "postgres",
   host: process.env.DATABASE_MASTER_HOST,
   port: 5432,
@@ -13,4 +14,4 @@ export const dbConfig: ConnectionOptions = {
   database: process.env.DATABASE_NAME,
   entities: [User, Category, Records],
   synchronize: true,
-};
+});
