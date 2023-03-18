@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.routes";
 import bodyParser from "body-parser";
 import CategoryRouter from "./routes/category.routes";
 import { myDataSource } from "./database/db.config";
+import jwt from "jsonwebtoken";
 import RecordRouter from "./routes/record.routes";
 
 dotenv.config();
@@ -26,6 +27,19 @@ app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
 
+app.use((req: Request, res, next) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!token) {
+    throw new Error("u need token on protected routes");
+  }
+  try {
+    const decoded = jwt.verify(token, "topSecret21");
+    req["decoded"] = decoded;
+    next();
+  } catch (Err) {
+    res.status(401).send(Err);
+  }
+});
 app.use("/category", CategoryRouter);
 
 app.use("/record", RecordRouter);

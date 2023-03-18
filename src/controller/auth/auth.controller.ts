@@ -1,7 +1,6 @@
 import { RequestHandler, response } from "express";
 import { AuthService } from "../../service/auth.service";
-import { request } from "http";
-
+import jwt from "jsonwebtoken";
 export const registration: RequestHandler = async (request, response, next) => {
   const userName = request.body["userName"];
   const password = request.body["password"];
@@ -27,7 +26,11 @@ export const login: RequestHandler = async (request, response, next) => {
     return response.json("user doesnot exsists");
   }
   if (userExsists.password == password) {
-    return response.json({ succses: true });
+    const token = jwt.sign({ userName: userExsists.username }, "topSecret21", {
+      expiresIn: "1d",
+    });
+    console.log(token);
+    return response.json({ succses: true, token: token });
   } else {
     return response.status(404).json("incorrect password");
   }

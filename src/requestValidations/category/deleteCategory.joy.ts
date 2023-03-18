@@ -2,10 +2,7 @@ import Joi from "joi";
 
 import { Request, Response, NextFunction } from "express";
 
-export const deleteCategory = Joi.object({
-  userName: Joi.string().required(),
-  password: Joi.string().required().min(4),
-});
+export const deleteCategory = Joi.object({});
 
 export function deleteCategoryValidate(
   req: Request,
