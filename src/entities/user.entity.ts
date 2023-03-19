@@ -14,4 +14,7 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.user)
   category: Category[];
+
+  @Column("timestamp without time zone", { name: "createdAt", nullable: true })
+  createdAt: Date | null;
 }

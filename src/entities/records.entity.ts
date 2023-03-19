@@ -22,4 +22,7 @@ export class Records {
 
   @ManyToOne(() => Category, (user) => user.record)
   category: Category;
+
+  @Column("timestamp without time zone", { name: "createdAt", nullable: true })
+  createdAt: Date | null;
 }
