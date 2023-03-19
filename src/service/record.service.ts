@@ -16,24 +16,26 @@ export class RecordService {
       price: string;
       type: RecordTypeEnum;
     },
-    category: Category
+    category: Category[]
   ) {
-    const createRecord = new Records();
-    createRecord.descriotion = record.descriotion;
-    createRecord.price = record.price;
-    createRecord.type = record.type;
-    console.log("wtf");
-    if (record.type == "outcome") {
-      console.log("aqvar");
-      console.log(record.process);
-      if (record.process == undefined)
-        throw new Error(
-          "outcome record needs to have a process, [Processing, Completed]"
-        );
-      createRecord.status = record?.process;
-    }
-    createRecord.category = category;
-    await this.recordRepo.save(createRecord);
+    category.map(async (data) => {
+      const createRecord = new Records();
+      createRecord.descriotion = record.descriotion;
+      createRecord.price = record.price;
+      createRecord.type = record.type;
+
+      if (record.type == "outcome") {
+        if (record.process == undefined)
+          throw new Error(
+            "outcome record needs to have a process, [Processing, Completed]"
+          );
+        createRecord.status = record?.process;
+      }
+      createRecord.category = data;
+      if (createRecord.category) {
+        await this.recordRepo.save(createRecord);
+      }
+    });
   }
 
   public async getRecordsByCategory(catgory: Category) {
