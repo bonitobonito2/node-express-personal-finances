@@ -29,7 +29,6 @@ export const login: RequestHandler = async (request, response, next) => {
     const token = jwt.sign({ userName: userExsists.username }, "topSecret21", {
       expiresIn: "1d",
     });
-    console.log(token);
     return response.json({ succses: true, token: token });
   } else {
     return response.status(404).json("incorrect password");
