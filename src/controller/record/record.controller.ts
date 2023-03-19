@@ -17,10 +17,9 @@ export const createRecord: RequestHandler = async (request, response, next) => {
   try {
     const userExsists = await authService.getUser(userName);
 
-    const userHasCategory = await categoryService.userHasCategoryByName(
-      categoryName,
-      userExsists
-    );
+    const userHasCategory = categoryName
+      ? await categoryService.userHasCategoryByName(categoryName, userExsists)
+      : false;
     if (typeof userHasCategory !== "boolean") {
       await recordService.createRecord(
         {
@@ -31,9 +30,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
         },
         userHasCategory
       );
-      return response.json(
-        `record created in ${userHasCategory.categoryName} category `
-      );
+      return response.json(`record created  `);
     } else {
       const createDefaultCategory =
         await categoryService.createCategoryAndCheck("default", userExsists);
@@ -46,7 +43,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
             process: process,
             type: type,
           },
-          createDefaultCategory
+          [createDefaultCategory]
         );
         return response.json(
           "created default category and added record in default due to category field with given name doesnot exsists or  is undefined"
@@ -67,7 +64,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
             process: process,
             type: type,
           },
-          getCategory
+          [getCategory]
         );
         response.json(
           "added record in default  category due to category field with given name doesnot exsists or  is undefined"
