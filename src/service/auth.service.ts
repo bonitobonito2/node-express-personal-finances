@@ -2,6 +2,7 @@ import { Repository, getRepository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { userInterface } from "../interfaces/user.interface";
 import { myDataSource } from "../database/db.config";
+import { datetime } from "../helper/helper";
 
 export class AuthService {
   public userRepo = myDataSource.getRepository(User);
@@ -19,6 +20,7 @@ export class AuthService {
       const data = await this.userRepo.insert({
         username: userInfo.userName,
         password: userInfo.password,
+        createdAt: datetime(),
       });
 
       if (data) return true;
