@@ -7,7 +7,7 @@ export const createRecord = Joi.object({
   price: Joi.number().required(),
   process: Joi.string().valid("Processing", "Completed"),
   type: Joi.string().required().valid("income", "outcome"),
-  categoryName: Joi.string(),
+  categoryName: Joi.array().items(Joi.string()),
 });
 
 export function createRecordValidate(
