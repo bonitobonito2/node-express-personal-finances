@@ -97,12 +97,12 @@ export const deleteCategory: RequestHandler = async (
 
       //checking if user has a default category
       const userHasDefaultCategory =
-        await categoryService.userHasCategoryByName("default", userExsists);
+        await categoryService.userHasCategoryByName(["default"], userExsists);
       if (typeof userHasDefaultCategory !== "boolean") {
         //if user has a default category, moving old records in default
         await recordService.moveRecordsToDefaultCategory(
           records,
-          userHasDefaultCategory
+          userHasDefaultCategory[0]
         );
         return response.json(
           `deleted ${userHasCategory.categoryName} and moved it's records in default category`
