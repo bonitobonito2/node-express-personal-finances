@@ -2,6 +2,7 @@ import { Category } from "../entities/category.entity";
 import { User } from "../entities/user.entity";
 import { myDataSource } from "../database/db.config";
 import { Records } from "../entities/records.entity";
+import { datetime } from "../helper/helper";
 export class CategoryService {
   public categoryRepo = myDataSource.getRepository(Category);
   public userRepo = myDataSource.getRepository(User);
@@ -33,6 +34,7 @@ export class CategoryService {
 
     const category = new Category();
     category.categoryName = categoryName;
+    category.createdAt = datetime();
     category.user = user;
 
     return await this.categoryRepo.save(category);
@@ -41,6 +43,7 @@ export class CategoryService {
   public async createCategory(categoryName: string, user: User) {
     const category = new Category();
     category.categoryName = categoryName;
+    category.createdAt = datetime();
     category.user = user;
 
     return await this.categoryRepo.save(category);
