@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler, response } from "express";
 import { AuthService } from "../../service/auth.service";
 import { CategoryService } from "../../service/category.service";
 import { RecordService } from "../../service/record.service";
@@ -15,6 +15,11 @@ export const createRecord: RequestHandler = async (request, response, next) => {
   const categoryService = new CategoryService();
   const recordService = new RecordService();
   try {
+    if (type == "outcome" && process == undefined) {
+      throw new Error(
+        "outcome record needs to have a process, [Processing, Completed]"
+      );
+    }
     const userExsists = await authService.getUser(userName);
 
     const userHasCategory = categoryName
@@ -74,4 +79,13 @@ export const createRecord: RequestHandler = async (request, response, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+export const getFilteredRecord: RequestHandler = async (req, res, next) => {
+  const userName = req["decoded"]["userName"];
+
+  const recordService = new RecordService();
+
+  const records = await recordService.getAllRecords(userName);
+  return res.json(records);
 };
