@@ -67,20 +67,28 @@ export class CategoryService {
   }
 
   public async userHasCategoryByName(
-    categoryName: string,
+    categoryName: Array<string>,
     user: User
-  ): Promise<Category | boolean> {
+  ): Promise<Category[] | boolean> {
     try {
-      const categoryExsists = await this.categoryRepo.findOne({
-        where: {
-          user: user,
-          categoryName: categoryName,
-        },
-      });
-      if (categoryExsists && categoryName !== undefined) {
-        return categoryExsists;
+      let categories = await Promise.all(
+        categoryName.map(async (data): Promise<Category> => {
+          const categoryExsists = await this.categoryRepo.findOne({
+            where: {
+              user: user,
+              categoryName: data,
+            },
+          });
+          if (categoryExsists !== null && categoryExsists !== undefined)
+            return categoryExsists;
+        })
+      );
+      categories = categories.filter((data) => data !== undefined);
+      if (categories.length && categories !== undefined) {
+        return categories;
+      } else {
+        return false;
       }
-      return false;
     } catch (err) {
       throw new Error(err);
     }
