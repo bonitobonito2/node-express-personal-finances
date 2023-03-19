@@ -1,8 +1,11 @@
+import { NextFunction } from "express";
 import { myDataSource } from "../database/db.config";
 import { Category } from "../entities/category.entity";
 import { Records } from "../entities/records.entity";
 import { User } from "../entities/user.entity";
 import { RecordTypeEnum } from "../enums/records.enum";
+import { datetime } from "../helper/helper";
+import { AuthService } from "./auth.service";
 
 export class RecordService {
   public categoryRepo = myDataSource.getRepository(Category);
@@ -18,24 +21,23 @@ export class RecordService {
     },
     category: Category[]
   ) {
-    category.map(async (data) => {
-      const createRecord = new Records();
-      createRecord.descriotion = record.descriotion;
-      createRecord.price = record.price;
-      createRecord.type = record.type;
+    try {
+      category.map(async (data) => {
+        const createRecord = new Records();
+        createRecord.descriotion = record.descriotion;
+        createRecord.price = record.price;
+        createRecord.type = record.type;
+        createRecord.createdAt = datetime();
+        createRecord.status = record.type == "outcome" ? record?.process : null;
 
-      if (record.type == "outcome") {
-        if (record.process == undefined)
-          throw new Error(
-            "outcome record needs to have a process, [Processing, Completed]"
-          );
-        createRecord.status = record?.process;
-      }
-      createRecord.category = data;
-      if (createRecord.category) {
+        createRecord.category = data;
+
         await this.recordRepo.save(createRecord);
-      }
-    });
+      });
+    } catch (err) {
+      console.log("1111111111");
+      throw new Error(err);
+    }
   }
 
   public async getRecordsByCategory(catgory: Category) {
@@ -45,6 +47,31 @@ export class RecordService {
       },
       where: {
         category: catgory,
+      },
+    });
+
+    return records;
+  }
+
+  public async getAllRecords(userName: string) {
+    const userService = new AuthService();
+    const user = await userService.getUser(userName);
+
+    const categories = await this.categoryRepo.find({
+      where: {
+        user: user,
+      },
+    });
+    const records = await this.recordRepo.find({
+      relations: {
+        category: true,
+      },
+      where: {
+        type: RecordTypeEnum.OUTCOME,
+        category: categories,
+      },
+      order: {
+        createdAt: "DESC",
       },
     });
 
