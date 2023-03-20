@@ -3,7 +3,10 @@
 3. add .env file and fill it by .env.example file (insert your database information)
 4. run (npm run dev) to start a development server
 
-A P I D O C U M E N T A T I O N.
+<center>
+<h1>API DOCUMENTATION </h1>
+
+</center>
 
 .AUTH.
 
