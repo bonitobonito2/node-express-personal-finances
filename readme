@@ -3,18 +3,50 @@
 3. add .env file and fill it by .env.example file (insert your database information)
 4. run (npm run dev) to start a development server
 
-HOW TO USE APP CORECTLY:
+A P I D O C U M E N T A T I O N.
 
-1. send post request on yourPort/auth/registration, enter userName and password in body (craete account)
+.AUTH.
 
-2. send post request on yourPort/auth/login, enter your userName and password, if everything is correct
-   you will get your private jwt token, which u need to accses on protected routes.
+{creates user in database}
+POST ... http://localhost:PORT/auth/registration.
+PARAMETERS ... {userName : "your user name", password : "your password"}
 
-3. create category, send POST request on yourPort/category/create. inser your token in request header (Bearer Token) because you need user account to create a category ,and in body insert data like this{"categoryName" : yourCategoryName}.
+{login with user}
+POST ... http://localhost:PORT/auth/login.
+PARAMETERS ... {userName : "your user name", password : "your password"}
 
-4. insert records in your category, use your token same as in last stap, and than POST youtPort/record/create, fill the body like this
-   {"categoryName" : [],"description": , "price": , "type":"outcome", "process" :[Processing, Completed]}
-   note : categoryName is not required and it should by array of category names. note: process key not required when type is income.
+{change user password}
+POST ... http://localhost:PORT/auth/changePassword.
+PARAMETERS ... {userName : "your user name", currentPassword : "your password", newPassword: "new password"}
 
-5. to get the created records. again insert your token and than post get request on the URL like this
-   yourHost/record/filter?status=Completed&minPrice=500&maxPrice=1100&outcome=true, every query parameter is optional and you can add income=true too for example.
+.CATEGORY.
+
+{create category}
+POST ... http://localhost:PORT/category/craete.
+HEADERS ... {barrer_token : your generated token}
+PARAMETERS ... {categoryName : 'categoryName'}
+
+{rename category}
+put ... http://localhost:PORT/category/changeName/:id.
+PARAMETERS ... {newCategoryName : 'new category name'}
+HEADERS : {barrer_token : your generated token}
+
+{delete category}
+delete ... http://localhost:PORT/category/:categoryId.
+PARAMETERS... NULL
+HEADERS ... {barrer_token : your generated token}
+
+.RECORD.
+
+{create record}
+POST ... http://localhost:PORT/record/create.
+HEADERS : {barrer_token : your generated token}
+PARAMETERS... {"categoryName" : ["test"],"description":"fun", "price": "1000", "type":"outcome", "process" : "Processing"}
+categoryName ---- NOT required
+process -- NOT required IF type is INCOME
+
+{get records}
+POST ... http://localhost:PORT/record/filter?status=Processing&minPrice=599&maxPrice=760&outcome=true.
+HEADERS : {barrer_token : your generated token}
+PARAMETERS... NULL
+NOTE :: non of query parameters are required. you can use income=true as well.
