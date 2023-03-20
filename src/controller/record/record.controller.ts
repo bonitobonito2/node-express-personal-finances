@@ -83,7 +83,6 @@ export const createRecord: RequestHandler = async (request, response, next) => {
 
 export const getFilteredRecord: RequestHandler = async (req, res, next) => {
   const userName = req["decoded"]["userName"];
-  console.log(req.query);
 
   try {
     const income = req.query["income"] == "true" ? true : null;

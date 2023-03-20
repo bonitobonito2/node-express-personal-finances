@@ -34,7 +34,6 @@ export class RecordService {
         await this.recordRepo.save(createRecord);
       });
     } catch (err) {
-      console.log("1111111111");
       throw new Error(err);
     }
   }
@@ -71,7 +70,6 @@ export class RecordService {
         .andWhere("record.price > :minPrice", {
           minPrice: data.minPrice ? data.minPrice : 0,
         })
-
         .leftJoinAndSelect("record.category", "category")
         .andHaving("record.category IN (:...category)", {
           category: fileteredCategories,
@@ -86,6 +84,7 @@ export class RecordService {
         );
         return filteredByStatusRecords;
       }
+
       return records;
     } else {
       const records = await this.recordRepo
@@ -96,7 +95,6 @@ export class RecordService {
         .andWhere("record.price > :minPrice", {
           minPrice: data.minPrice ? data.minPrice : 0,
         })
-
         .andWhere("record.type = :income", {
           income: data.income ? "income" : "outcome",
         })
