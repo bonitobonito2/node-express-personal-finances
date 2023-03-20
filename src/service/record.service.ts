@@ -1,4 +1,3 @@
-import { NextFunction } from "express";
 import { myDataSource } from "../database/db.config";
 import { Category } from "../entities/category.entity";
 import { Records } from "../entities/records.entity";
@@ -25,7 +24,7 @@ export class RecordService {
       category.map(async (data) => {
         const createRecord = new Records();
         createRecord.descriotion = record.descriotion;
-        createRecord.price = record.price;
+        createRecord.price = parseInt(record.price);
         createRecord.type = record.type;
         createRecord.createdAt = datetime();
         createRecord.status = record.type == "outcome" ? record?.process : null;
@@ -53,7 +52,7 @@ export class RecordService {
     return records;
   }
 
-  public async getAllRecords(userName: string) {
+  public async getAllRecords(userName: string, data: Parameter) {
     const userService = new AuthService();
     const user = await userService.getUser(userName);
 
@@ -62,20 +61,64 @@ export class RecordService {
         user: user,
       },
     });
-    const records = await this.recordRepo.find({
-      relations: {
-        category: true,
-      },
-      where: {
-        type: RecordTypeEnum.OUTCOME,
-        category: categories,
-      },
-      order: {
-        createdAt: "DESC",
-      },
-    });
+    const fileteredCategories = categories.map((data) => data.id);
+    if ((data.income && data.outcome) || (!data.income && !data.outcome)) {
+      const records = await this.recordRepo
+        .createQueryBuilder("record")
+        .where("record.price < :price", {
+          price: data.maxPrice ? data.maxPrice : 9999999,
+        })
+        .andWhere("record.price > :minPrice", {
+          minPrice: data.minPrice ? data.minPrice : 0,
+        })
 
-    return records;
+        .leftJoinAndSelect("record.category", "category")
+        .andHaving("record.category IN (:...category)", {
+          category: fileteredCategories,
+        })
+        .addGroupBy("record.id")
+        .addGroupBy("category.id")
+        .getMany();
+
+      if (data.status) {
+        const filteredByStatusRecords = records.filter(
+          (record) => record.status == data.status
+        );
+        return filteredByStatusRecords;
+      }
+      return records;
+    } else {
+      const records = await this.recordRepo
+        .createQueryBuilder("record")
+        .where("record.price < :price", {
+          price: data.maxPrice ? data.maxPrice : 9999999,
+        })
+        .andWhere("record.price > :minPrice", {
+          minPrice: data.minPrice ? data.minPrice : 0,
+        })
+
+        .andWhere("record.type = :income", {
+          income: data.income ? "income" : "outcome",
+        })
+        .andWhere("record.type = :outcome", {
+          outcome: data.outcome ? "outcome" : "income",
+        })
+        .leftJoinAndSelect("record.category", "category")
+        .andHaving("record.category IN (:...category)", {
+          category: fileteredCategories,
+        })
+        .addGroupBy("record.id")
+        .addGroupBy("category.id")
+        .getMany();
+      if (data.status) {
+        const filteredByStatusRecords = records.filter(
+          (record) => record.status == data.status
+        );
+
+        return filteredByStatusRecords;
+      }
+      return records;
+    }
   }
 
   public async moveRecordsToDefaultCategory(
