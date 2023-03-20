@@ -12,7 +12,7 @@ export class Records {
   descriotion: string;
 
   @Column()
-  price: string;
+  price: number;
 
   @Column({ enum: Process, nullable: true })
   status: string;
