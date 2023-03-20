@@ -14,7 +14,7 @@ HOW TO USE APP CORECTLY:
 
 4. insert records in your category, use your token same as in last stap, and than POST youtPort/record/create, fill the body like this
    {"categoryName" : [],"description": , "price": , "type":"outcome", "process" :[Processing, Completed]}
-   note : categoryName is not required and it should by array of categories, process key not required when type is income.
+   note : categoryName is not required and it should by array of category names. note: process key not required when type is income.
 
 5. to get the created records. again insert your token and than post get request on the URL like this
    yourHost/record/filter?status=Completed&minPrice=500&maxPrice=1100&outcome=true, every query parameter is optional and you can add income=true too for example.
