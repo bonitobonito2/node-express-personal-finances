@@ -83,9 +83,36 @@ export const createRecord: RequestHandler = async (request, response, next) => {
 
 export const getFilteredRecord: RequestHandler = async (req, res, next) => {
   const userName = req["decoded"]["userName"];
+  console.log(req.query);
 
-  const recordService = new RecordService();
+  try {
+    const income = req.query["income"] == "true" ? true : null;
+    const outcome = req.query["outcome"] == "true" ? true : null;
+    const status = req.query["status"] ? req.query["status"].toString() : null;
+    const maxPrice = req.query["maxPrice"]
+      ? parseInt(req.query["maxPrice"].toString())
+      : null;
+    const minPrice = req.query["minPrice"]
+      ? parseInt(req.query["minPrice"].toString())
+      : null;
 
-  const records = await recordService.getAllRecords(userName);
-  return res.json(records);
+    if (status !== null && status !== "Processing" && status !== "Completed") {
+      throw new Error(
+        "status query parameter can only be Processing OR Completed"
+      );
+    }
+
+    const recordService = new RecordService();
+
+    const records = await recordService.getAllRecords(userName, {
+      income: income,
+      outcome: outcome,
+      maxPrice: maxPrice,
+      minPrice: minPrice,
+      status: status,
+    });
+    return res.json(records);
+  } catch (err) {
+    next(err);
+  }
 };
