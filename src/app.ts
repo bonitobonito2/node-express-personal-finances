@@ -19,10 +19,10 @@ myDataSource
       console.log("SERVER IS UP ON PORT:", port);
 
       console.log(
-        "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
+        "----------READ README FILE FOR BETTER DOCCUMENTATION---------\n"
       );
       console.log(
-        "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
+        "----------READ README FILE FOR BETTER DOCCUMENTATION---------\n"
       );
       console.log(
         "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
