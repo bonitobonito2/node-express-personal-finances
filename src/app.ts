@@ -14,8 +14,19 @@ myDataSource
   .initialize()
   .then(() => {
     console.log("Connected to database!");
+
     app.listen(port, (): void => {
       console.log("SERVER IS UP ON PORT:", port);
+
+      console.log(
+        "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
+      );
+      console.log(
+        "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
+      );
+      console.log(
+        "----------READ README FILE FOR BETTER DOCCUMENTATION---------"
+      );
     });
   })
   .catch((err) => {
