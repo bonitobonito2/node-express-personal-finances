@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.0",
     "luxon": "^3.3.0",
     "nodemon": "^2.0.21",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "typeorm-encrypted": "^0.8.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",

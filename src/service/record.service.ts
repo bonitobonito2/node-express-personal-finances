@@ -55,67 +55,75 @@ export class RecordService {
     const userService = new AuthService();
     const user = await userService.getUser(userName);
 
-    const categories = await this.categoryRepo.find({
-      where: {
-        user: user,
-      },
-    });
-    const fileteredCategories = categories.map((data) => data.id);
-    if ((data.income && data.outcome) || (!data.income && !data.outcome)) {
-      const records = await this.recordRepo
-        .createQueryBuilder("record")
-        .where("record.price < :price", {
-          price: data.maxPrice ? data.maxPrice : 9999999,
-        })
-        .andWhere("record.price > :minPrice", {
-          minPrice: data.minPrice ? data.minPrice : 0,
-        })
-        .leftJoinAndSelect("record.category", "category")
-        .andHaving("record.category IN (:...category)", {
-          category: fileteredCategories,
-        })
-        .addGroupBy("record.id")
-        .addGroupBy("category.id")
-        .getMany();
-
-      if (data.status) {
-        const filteredByStatusRecords = records.filter(
-          (record) => record.status == data.status
-        );
-        return filteredByStatusRecords;
+    try {
+      const categories = await this.categoryRepo.find({
+        where: {
+          user: user,
+        },
+      });
+      if (!categories.length) {
+        throw new Error("user doesnt have any categories");
       }
+      const fileteredCategories = categories.map((data) => data.id);
 
-      return records;
-    } else {
-      const records = await this.recordRepo
-        .createQueryBuilder("record")
-        .where("record.price < :price", {
-          price: data.maxPrice ? data.maxPrice : 9999999,
-        })
-        .andWhere("record.price > :minPrice", {
-          minPrice: data.minPrice ? data.minPrice : 0,
-        })
-        .andWhere("record.type = :income", {
-          income: data.income ? "income" : "outcome",
-        })
-        .andWhere("record.type = :outcome", {
-          outcome: data.outcome ? "outcome" : "income",
-        })
-        .leftJoinAndSelect("record.category", "category")
-        .andHaving("record.category IN (:...category)", {
-          category: fileteredCategories,
-        })
-        .addGroupBy("record.id")
-        .addGroupBy("category.id")
-        .getMany();
-      if (data.status) {
-        const filteredByStatusRecords = records.filter(
-          (record) => record.status == data.status
-        );
+      if ((data.income && data.outcome) || (!data.income && !data.outcome)) {
+        const records = await this.recordRepo
+          .createQueryBuilder("record")
+          .where("record.price < :price", {
+            price: data.maxPrice ? data.maxPrice : 9999999,
+          })
+          .andWhere("record.price > :minPrice", {
+            minPrice: data.minPrice ? data.minPrice : 0,
+          })
+          .leftJoinAndSelect("record.category", "category")
+          .andHaving("record.category IN (:...category)", {
+            category: fileteredCategories,
+          })
+          .addGroupBy("record.id")
+          .addGroupBy("category.id")
+          .getMany();
 
-        return filteredByStatusRecords;
+        if (data.status) {
+          const filteredByStatusRecords = records.filter(
+            (record) => record.status == data.status
+          );
+          return filteredByStatusRecords;
+        }
+
+        return records;
+      } else {
+        const records = await this.recordRepo
+          .createQueryBuilder("record")
+          .where("record.price < :price", {
+            price: data.maxPrice ? data.maxPrice : 9999999,
+          })
+          .andWhere("record.price > :minPrice", {
+            minPrice: data.minPrice ? data.minPrice : 0,
+          })
+          .andWhere("record.type = :income", {
+            income: data.income ? "income" : "outcome",
+          })
+          .andWhere("record.type = :outcome", {
+            outcome: data.outcome ? "outcome" : "income",
+          })
+          .leftJoinAndSelect("record.category", "category")
+          .andHaving("record.category IN (:...category)", {
+            category: fileteredCategories,
+          })
+          .addGroupBy("record.id")
+          .addGroupBy("category.id")
+          .getMany();
+        if (data.status) {
+          const filteredByStatusRecords = records.filter(
+            (record) => record.status == data.status
+          );
+
+          return filteredByStatusRecords;
+        }
+        return records;
       }
-      return records;
+    } catch (err) {
+      throw new Error(err);
     }
   }
 

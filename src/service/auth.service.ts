@@ -1,4 +1,3 @@
-import { Repository, getRepository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { userInterface } from "../interfaces/user.interface";
 import { myDataSource } from "../database/db.config";
