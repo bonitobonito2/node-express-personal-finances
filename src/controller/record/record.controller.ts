@@ -14,7 +14,11 @@ export const createRecord: RequestHandler = async (request, response, next) => {
   const authService = new AuthService();
   const categoryService = new CategoryService();
   const recordService = new RecordService();
+
   try {
+    if (price < 0) {
+      throw new Error("Price cannot be less than zero.");
+    }
     if (type == "outcome" && process == undefined) {
       throw new Error(
         "outcome record needs to have a process, [Processing, Completed]"
@@ -88,9 +92,18 @@ export const getFilteredRecord: RequestHandler = async (req, res, next) => {
     const income = req.query["income"] == "true" ? true : null;
     const outcome = req.query["outcome"] == "true" ? true : null;
     const status = req.query["status"] ? req.query["status"].toString() : null;
+    const maxDate = req.query["maxDate"]
+      ? req.query["maxDate"].toString()
+      : null;
+
+    const minDate = req.query["minDate"]
+      ? req.query["minDate"].toString()
+      : null;
+
     const maxPrice = req.query["maxPrice"]
       ? parseInt(req.query["maxPrice"].toString())
       : null;
+
     const minPrice = req.query["minPrice"]
       ? parseInt(req.query["minPrice"].toString())
       : null;
@@ -109,6 +122,8 @@ export const getFilteredRecord: RequestHandler = async (req, res, next) => {
       maxPrice: maxPrice,
       minPrice: minPrice,
       status: status,
+      maxDate: !Number.isNaN(Date.parse(maxDate)) ? Date.parse(maxDate) : null,
+      minDate: !Number.isNaN(Date.parse(minDate)) ? Date.parse(minDate) : null,
     });
     return res.json(records);
   } catch (err) {
