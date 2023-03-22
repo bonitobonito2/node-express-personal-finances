@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from "express";
 export const createRecord = Joi.object({
   description: Joi.string().required(),
   price: Joi.number().required(),
-  process: Joi.string().valid("Processing", "Completed"),
+  status: Joi.string().valid("Processing", "Completed"),
   type: Joi.string().required().valid("income", "outcome"),
   categoryName: Joi.array().items(Joi.string()),
 });

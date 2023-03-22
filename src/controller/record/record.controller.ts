@@ -9,7 +9,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
   const categoryName = request?.body["categoryName"];
   const price = request.body["price"];
   const description = request.body["description"];
-  const process = request?.body["process"];
+  const status = request?.body["status"];
   const type = request.body["type"];
   const authService = new AuthService();
   const categoryService = new CategoryService();
@@ -19,9 +19,9 @@ export const createRecord: RequestHandler = async (request, response, next) => {
     if (price < 0) {
       throw new Error("Price cannot be less than zero.");
     }
-    if (type == "outcome" && process == undefined) {
+    if (type == "outcome" && status == undefined) {
       throw new Error(
-        "outcome record needs to have a process, [Processing, Completed]"
+        "outcome record needs to have a status, [Processing, Completed]"
       );
     }
     const userExsists = await authService.getUser(userName);
@@ -34,7 +34,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
         {
           descriotion: description,
           price: price,
-          process: process,
+          status: status,
           type: type,
         },
         userHasCategory
@@ -49,7 +49,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
           {
             descriotion: description,
             price: price,
-            process: process,
+            status: status,
             type: type,
           },
           [createDefaultCategory]
@@ -70,7 +70,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
           {
             descriotion: description,
             price: price,
-            process: process,
+            status: status,
             type: type,
           },
           [getCategory]
