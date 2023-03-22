@@ -41,9 +41,9 @@ HEADERS ... {barrer_token : your generated token}
 {create record}
 POST ... http://localhost:PORT/record/create.
 HEADERS : {barrer_token : your generated token}
-PARAMETERS... {"categoryName" : ["test"],"description":"fun", "price": "1000", "type":"outcome", "process" : "Processing"}
+PARAMETERS... {"categoryName" : ["test"],"description":"fun", "price": "1000", "type":"outcome", "status" : "Processing"}
 categoryName ---- NOT required
-process -- NOT required IF type is INCOME
+status -- NOT required IF type is INCOME
 
 {get records}
 POST ... http://localhost:PORT/record/filter?status=Processing&minPrice=599&maxPrice=760&outcome=true&maxDate=2018-9-10.
@@ -59,4 +59,5 @@ HEADERS : {barrer_token : your generated token}
         income=true (only acsses value is true )
         outcome=true (only acsses value is true )
 
+NOTE :: you can use income=true&outcome=true same time and it will get everything. so dont worry:)
 NOTE :: non of query parameters are required
