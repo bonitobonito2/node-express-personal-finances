@@ -1,3 +1,4 @@
+import { Any } from "typeorm";
 import { myDataSource } from "../database/db.config";
 import { Category } from "../entities/category.entity";
 import { Records } from "../entities/records.entity";
@@ -14,7 +15,7 @@ export class RecordService {
   public async createRecord(
     record: {
       descriotion: string;
-      process: string;
+      status: string;
       price: string;
       type: RecordTypeEnum;
     },
@@ -27,7 +28,7 @@ export class RecordService {
         createRecord.price = parseInt(record.price);
         createRecord.type = record.type;
         createRecord.createdAt = datetime();
-        createRecord.status = record.type == "outcome" ? record?.process : null;
+        createRecord.status = record.type == "outcome" ? record?.status : null;
 
         createRecord.category = data;
 
@@ -61,81 +62,50 @@ export class RecordService {
           user: user,
         },
       });
-      if (!categories.length) {
+
+      if (!categories.length)
         throw new Error("user doesnt have any categories");
-      }
-      const fileteredCategories = categories.map((data) => data.id);
 
-      if ((data.income && data.outcome) || (!data.income && !data.outcome)) {
-        let records = await this.recordRepo
-          .createQueryBuilder("record")
-          .where("record.price < :price", {
-            price: data.maxPrice ? data.maxPrice : 9999999,
-          })
-          .andWhere("record.price > :minPrice", {
-            minPrice: data.minPrice ? data.minPrice : 0,
-          })
-          .leftJoinAndSelect("record.category", "category")
-          .andHaving("record.category IN (:...category)", {
-            category: fileteredCategories,
-          })
-          .addGroupBy("record.id")
-          .addGroupBy("category.id")
-          .getMany();
+      let records: Array<Records> = await this.recordRepo
+        .createQueryBuilder("record")
+        .leftJoinAndSelect("record.category", "category")
+        .where("record.price < :price", {
+          price: data.maxPrice ? data.maxPrice : 999999999,
+        })
+        .andWhere("record.price > :minPrice", {
+          minPrice: data.minPrice ? data.minPrice : 0,
+        })
+        .andHaving("record.type IN (:...type)", {
+          type:
+            (data.income && data.outcome) || (!data.income && !data.outcome)
+              ? ["income", "outcome"]
+              : data.income
+              ? ["income"]
+              : data.outcome
+              ? ["outcome"]
+              : null,
+        })
+        .andHaving("record.category IN (:...category)", {
+          category: categories.map((category) => category.id),
+        })
+        .addGroupBy("record.id")
+        .addGroupBy("category.id")
+        .getMany();
 
-        if (data.status) {
-          records = records.filter((record) => record.status == data.status);
-        }
+      if (data.status)
+        records = records.filter((record) => record.status == data.status);
 
-        if (data.maxDate) {
-          records = records.filter(
-            (record) => Date.parse(record.createdAt.toString()) < data.maxDate
-          );
-        }
+      if (data.maxDate)
+        records = records.filter(
+          (record) => Date.parse(record.createdAt.toString()) < data.maxDate
+        );
 
-        if (data.minDate) {
-          records = records.filter(
-            (record) => Date.parse(record.createdAt.toString()) > data.minDate
-          );
-        }
-        return records;
-      } else {
-        let records = await this.recordRepo
-          .createQueryBuilder("record")
-          .where("record.price < :price", {
-            price: data.maxPrice ? data.maxPrice : 9999999,
-          })
-          .andWhere("record.price > :minPrice", {
-            minPrice: data.minPrice ? data.minPrice : 0,
-          })
-          .andWhere("record.type = :income", {
-            income: data.income ? "income" : "outcome",
-          })
-          .andWhere("record.type = :outcome", {
-            outcome: data.outcome ? "outcome" : "income",
-          })
-          .leftJoinAndSelect("record.category", "category")
-          .andHaving("record.category IN (:...category)", {
-            category: fileteredCategories,
-          })
-          .addGroupBy("record.id")
-          .addGroupBy("category.id")
-          .getMany();
-        if (data.status)
-          records = records.filter((record) => record.status == data.status);
+      if (data.minDate)
+        records = records.filter(
+          (record) => Date.parse(record.createdAt.toString()) > data.minDate
+        );
 
-        if (data.maxDate)
-          records = records.filter(
-            (record) => Date.parse(record.createdAt.toString()) < data.maxDate
-          );
-
-        if (data.minDate)
-          records = records.filter(
-            (record) => Date.parse(record.createdAt.toString()) > data.minDate
-          );
-
-        return records;
-      }
+      return records;
     } catch (err) {
       throw new Error(err);
     }
