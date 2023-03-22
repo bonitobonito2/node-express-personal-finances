@@ -67,7 +67,7 @@ export class RecordService {
       const fileteredCategories = categories.map((data) => data.id);
 
       if ((data.income && data.outcome) || (!data.income && !data.outcome)) {
-        const records = await this.recordRepo
+        let records = await this.recordRepo
           .createQueryBuilder("record")
           .where("record.price < :price", {
             price: data.maxPrice ? data.maxPrice : 9999999,
@@ -84,15 +84,23 @@ export class RecordService {
           .getMany();
 
         if (data.status) {
-          const filteredByStatusRecords = records.filter(
-            (record) => record.status == data.status
-          );
-          return filteredByStatusRecords;
+          records = records.filter((record) => record.status == data.status);
         }
 
+        if (data.maxDate) {
+          records = records.filter(
+            (record) => Date.parse(record.createdAt.toString()) < data.maxDate
+          );
+        }
+
+        if (data.minDate) {
+          records = records.filter(
+            (record) => Date.parse(record.createdAt.toString()) > data.minDate
+          );
+        }
         return records;
       } else {
-        const records = await this.recordRepo
+        let records = await this.recordRepo
           .createQueryBuilder("record")
           .where("record.price < :price", {
             price: data.maxPrice ? data.maxPrice : 9999999,
@@ -113,13 +121,19 @@ export class RecordService {
           .addGroupBy("record.id")
           .addGroupBy("category.id")
           .getMany();
-        if (data.status) {
-          const filteredByStatusRecords = records.filter(
-            (record) => record.status == data.status
+        if (data.status)
+          records = records.filter((record) => record.status == data.status);
+
+        if (data.maxDate)
+          records = records.filter(
+            (record) => Date.parse(record.createdAt.toString()) < data.maxDate
           );
 
-          return filteredByStatusRecords;
-        }
+        if (data.minDate)
+          records = records.filter(
+            (record) => Date.parse(record.createdAt.toString()) > data.minDate
+          );
+
         return records;
       }
     } catch (err) {
