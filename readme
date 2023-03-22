@@ -46,7 +46,17 @@ categoryName ---- NOT required
 process -- NOT required IF type is INCOME
 
 {get records}
-POST ... http://localhost:PORT/record/filter?status=Processing&minPrice=599&maxPrice=760&outcome=true.
+POST ... http://localhost:PORT/record/filter?status=Processing&minPrice=599&maxPrice=760&outcome=true&maxDate=2018-9-10.
 HEADERS : {barrer_token : your generated token}
-PARAMETERS... NULL
-NOTE :: non of query parameters are required. you can use income=true as well.
+
+        .........QUERY PARAMETERS.......
+
+        maxDate=2022-5-14 (any data format)
+        minDate=2005-5-14 (any data format)
+        status = Processing || Completed
+        minPrice =500(number)
+        maxPrice=1000(number)
+        income=true (only acsses value is true )
+        outcome=true (only acsses value is true )
+
+NOTE :: non of query parameters are required
