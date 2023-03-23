@@ -24,12 +24,12 @@ export class RecordService {
     try {
       category.map(async (data) => {
         const createRecord = new Records();
+
         createRecord.descriotion = record.descriotion;
         createRecord.price = parseInt(record.price);
         createRecord.type = record.type;
         createRecord.createdAt = datetime();
         createRecord.status = record.type == "outcome" ? record?.status : null;
-
         createRecord.category = data;
 
         await this.recordRepo.save(createRecord);

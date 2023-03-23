@@ -7,6 +7,7 @@ export class CategoryService {
   public categoryRepo = myDataSource.getRepository(Category);
   public userRepo = myDataSource.getRepository(User);
   public recordRepo = myDataSource.getRepository(Records);
+
   public async changeCategoryNameById(
     id: number,
     newCategoryName: string
@@ -15,8 +16,10 @@ export class CategoryService {
 
     category.categoryName = newCategoryName;
     if (await this.categoryRepo.save(category)) return true;
+
     return false;
   }
+
   public async createCategoryAndCheck(categoryName: string, user: User) {
     const categoryExsists = await this.userRepo.find({
       relations: {
