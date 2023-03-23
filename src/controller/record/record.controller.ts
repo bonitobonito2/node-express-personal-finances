@@ -25,7 +25,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
       );
     }
     const userExsists = await authService.getUser(userName);
-
+    delete userExsists.password;
     const userHasCategory = categoryName
       ? await categoryService.userHasCategoryByName(categoryName, userExsists)
       : false;
@@ -54,9 +54,10 @@ export const createRecord: RequestHandler = async (request, response, next) => {
           },
           [createDefaultCategory]
         );
-        return response.json(
-          "created default category and added record in default due to category field with given name doesnot exsists or  is undefined"
-        );
+        return response.json({
+          info: "created default category and added record in default due to category field with given name doesnot exsists or  is undefined",
+          user: userExsists,
+        });
       } else {
         // default category already exsists for this user
         const getCategory = await categoryService.categoryRepo.findOne({
@@ -75,9 +76,10 @@ export const createRecord: RequestHandler = async (request, response, next) => {
           },
           [getCategory]
         );
-        response.json(
-          "added record in default  category due to category field with given name doesnot exsists or  is undefined"
-        );
+        response.json({
+          info: "added record in default  category due to category field with given name doesnot exsists or  is undefined",
+          user: userExsists,
+        });
       }
     }
   } catch (err) {
@@ -125,7 +127,7 @@ export const getFilteredRecord: RequestHandler = async (req, res, next) => {
       maxDate: !Number.isNaN(Date.parse(maxDate)) ? Date.parse(maxDate) : null,
       minDate: !Number.isNaN(Date.parse(minDate)) ? Date.parse(minDate) : null,
     });
-    return res.json(records);
+    return res.json({ info: records, user: userName });
   } catch (err) {
     next(err);
   }

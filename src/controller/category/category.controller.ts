@@ -16,17 +16,19 @@ export const createCategory: RequestHandler = async (
 
   try {
     const userExsists = await authService.getUser(userName);
-
+    delete userExsists.password;
     const createCategory = await categoryService.createCategoryAndCheck(
       categoryName,
       userExsists
     );
     if (createCategory == "category already exsists")
-      return response.status(402).json("category already exsists");
+      return response
+        .status(403)
+        .json({ info: "category already exsists", user: userExsists });
 
     return response
       .status(200)
-      .json({ data: `category ${categoryName} created` });
+      .json({ info: `category ${categoryName} created`, user: userExsists });
   } catch (err) {
     next(err);
   }
@@ -46,7 +48,7 @@ export const changeCategoryName: RequestHandler = async (
 
   try {
     const userExsists = await authService.getUser(userName);
-
+    delete userExsists.password;
     const categoryExsists = await categoryService.userHasCategory(
       categoryId,
       userExsists
@@ -54,13 +56,15 @@ export const changeCategoryName: RequestHandler = async (
     if (categoryExsists) {
       await categoryService.changeCategoryNameById(categoryId, newCategoryName);
 
-      return response.json(
-        `category name changed with id ${categoryId} changed to ${newCategoryName}`
-      );
+      return response.json({
+        info: `category name changed with id ${categoryId} changed to ${newCategoryName}`,
+        user: userExsists,
+      });
     } else {
-      return response
-        .status(403)
-        .json(`you dont have category with the id (${categoryId})`);
+      return response.status(403).json({
+        info: `you dont have category with the id (${categoryId})`,
+        user: userExsists,
+      });
     }
   } catch (err) {
     next(err);
@@ -83,6 +87,8 @@ export const deleteCategory: RequestHandler = async (
   try {
     const userExsists = await authService.getUser(userName);
 
+    delete userExsists.password;
+
     const userHasCategory = await categoryService.userHasCategory(
       categoryId,
       userExsists
@@ -104,9 +110,10 @@ export const deleteCategory: RequestHandler = async (
           records,
           userHasDefaultCategory[0]
         );
-        return response.json(
-          `deleted ${userHasCategory.categoryName} and moved it's records in default category`
-        );
+        return response.json({
+          info: `deleted ${userHasCategory.categoryName} and moved it's records in default category`,
+          user: userExsists,
+        });
       } else {
         //if user has not default category, craeting default
         //category and moving records in to default category
@@ -119,12 +126,16 @@ export const deleteCategory: RequestHandler = async (
           records,
           createDefaultCategory
         );
-        return response.json(
-          `deleted ${userHasCategory.categoryName}, created default category and moved ${userHasCategory.categoryName} records in default `
-        );
+        return response.json({
+          info: `deleted ${userHasCategory.categoryName}, created default category and moved ${userHasCategory.categoryName} records in default `,
+          user: userExsists,
+        });
       }
     } else {
-      return response.json("user doesnot have a category with this id");
+      return response.json({
+        info: "user doesnot have a category with this id",
+        user: userExsists,
+      });
     }
   } catch (err) {
     next(err);
