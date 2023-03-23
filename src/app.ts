@@ -6,6 +6,8 @@ import CategoryRouter from "./routes/category.routes";
 import { myDataSource } from "./database/db.config";
 import jwt from "jsonwebtoken";
 import RecordRouter from "./routes/record.routes";
+import cors from "cors";
+import { validateToken } from "./middlewares/validateToken.middleware";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -34,27 +36,19 @@ myDataSource
   });
 
 const app: Application = express();
+
+app.use(cors());
+
 app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
 
-app.use((req: Request, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
-  if (!token) {
-    throw new Error("u need token on protected routes");
-  }
-  try {
-    const decoded = jwt.verify(token, "topSecret21");
-    req["decoded"] = decoded;
-    next();
-  } catch (Err) {
-    return res.status(401).send(Err);
-  }
-});
+app.use(validateToken);
+
 app.use("/category", CategoryRouter);
 
 app.use("/record", RecordRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  return res.status(500).json(err.message);
+app.use((err: Error, req: Request, res: Response) => {
+  return res.status(503).json(err.message);
 });
