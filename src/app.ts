@@ -15,6 +15,8 @@ const port = process.env.PORT;
 myDataSource
   .initialize()
   .then(() => {
+    if (port === undefined)
+      throw new Error("port is undefined, fill the .env folder");
     console.log("Connected to database!");
 
     app.listen(port, (): void => {
