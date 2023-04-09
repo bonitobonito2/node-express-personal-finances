@@ -10,7 +10,6 @@ export const myDataSource = new DataSource({
   host: process.env.DATABASE_MASTER_HOST,
   port: parseInt(process.env.DATABASE_PORT), // or the port number you are using
   username: process.env.DATABASE_USER,
-  // password: "QsS3jlkdyCR5",
   database: process.env.DATABASE_NAME,
   password: process.env.DATABASE_PASSWORD,
   entities: [User, Category, Records],
