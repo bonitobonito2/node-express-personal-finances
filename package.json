@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node build/app.js",
-    "dev": "npx tsc && node build/app.js"
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q build/app.js\"",
+    "prod" : "npx tsc && node build/app.js"
   },
   "author": "",
   "license": "ISC",
