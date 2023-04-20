@@ -4,7 +4,7 @@ import { CategoryService } from "../../service/category.service";
 import { RecordService } from "../../service/record.service";
 
 export const createRecord: RequestHandler = async (request, response, next) => {
-  const userName = request["decoded"]["userName"];
+  const email = request["decoded"]["email"];
 
   const categoryName = request?.body["categoryName"];
   const price = request.body["price"];
@@ -24,7 +24,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
         "outcome record needs to have a status, [Processing, Completed]"
       );
     }
-    const userExsists = await authService.getUser(userName);
+    const userExsists = await authService.getUser(email);
     delete userExsists.password;
     const userHasCategory = categoryName
       ? await categoryService.userHasCategoryByName(categoryName, userExsists)
@@ -88,7 +88,7 @@ export const createRecord: RequestHandler = async (request, response, next) => {
 };
 
 export const getFilteredRecord: RequestHandler = async (req, res, next) => {
-  const userName = req["decoded"]["userName"];
+  const email = req["decoded"]["email"];
 
   try {
     const income = req.query["income"] == "true" ? true : null;
@@ -118,7 +118,7 @@ export const getFilteredRecord: RequestHandler = async (req, res, next) => {
 
     const recordService = new RecordService();
 
-    const records = await recordService.getAllRecords(userName, {
+    const records = await recordService.getAllRecords(email, {
       income: income,
       outcome: outcome,
       maxPrice: maxPrice,
@@ -127,7 +127,7 @@ export const getFilteredRecord: RequestHandler = async (req, res, next) => {
       maxDate: !Number.isNaN(Date.parse(maxDate)) ? Date.parse(maxDate) : null,
       minDate: !Number.isNaN(Date.parse(minDate)) ? Date.parse(minDate) : null,
     });
-    return res.json({ info: records, user: userName });
+    return res.json({ info: records, user: email });
   } catch (err) {
     next(err);
   }

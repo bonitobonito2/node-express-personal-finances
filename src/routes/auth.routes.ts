@@ -3,6 +3,7 @@ import {
   changePassword,
   login,
   registration,
+  verifeEmail,
 } from "../controller/auth/auth.controller";
 import { loginValidation } from "../requestValidations/auth/login.joy";
 import { validateRegistration } from "../requestValidations/auth/registration.joy";
@@ -15,5 +16,7 @@ authRouter.post("/registration", validateRegistration, registration);
 authRouter.post("/login", loginValidation, login);
 
 authRouter.post("/change-password", changePasswordValidate, changePassword);
+
+authRouter.get("/verife-email/:verifeKey", verifeEmail);
 
 export default authRouter;

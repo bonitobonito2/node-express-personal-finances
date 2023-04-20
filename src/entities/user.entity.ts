@@ -8,7 +8,7 @@ export class User {
   id: number;
 
   @Column()
-  username: string;
+  email: string;
 
   @Column("text", {
     name: "password",
@@ -20,6 +20,9 @@ export class User {
     }),
   })
   password: string;
+
+  @Column("boolean", { default: false })
+  verifed: boolean = false;
 
   @OneToMany(() => Category, (category) => category.user)
   category: Category[];

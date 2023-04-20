@@ -11,11 +11,11 @@ export const createCategory: RequestHandler = async (
   const authService = new AuthService();
   const categoryService = new CategoryService();
 
-  const userName = request["decoded"]["userName"];
+  const email = request["decoded"]["email"];
   const categoryName = request.body["categoryName"];
 
   try {
-    const userExsists = await authService.getUser(userName);
+    const userExsists = await authService.getUser(email);
     delete userExsists.password;
     const createCategory = await categoryService.createCategoryAndCheck(
       categoryName,
@@ -39,7 +39,7 @@ export const changeCategoryName: RequestHandler = async (
   response,
   next
 ) => {
-  const userName = request["decoded"]["userName"];
+  const email = request["decoded"]["email"];
   const newCategoryName = request.body["newCategoryName"];
 
   const categoryId = parseInt(request.params.id);
@@ -47,7 +47,7 @@ export const changeCategoryName: RequestHandler = async (
   const authService = new AuthService();
 
   try {
-    const userExsists = await authService.getUser(userName);
+    const userExsists = await authService.getUser(email);
     delete userExsists.password;
     const categoryExsists = await categoryService.userHasCategory(
       categoryId,
@@ -76,7 +76,7 @@ export const deleteCategory: RequestHandler = async (
   response,
   next
 ) => {
-  const userName = request["decoded"]["userName"];
+  const email = request["decoded"]["email"];
 
   const categoryId = parseInt(request.params["id"]);
 
@@ -85,7 +85,7 @@ export const deleteCategory: RequestHandler = async (
   const recordService = new RecordService();
 
   try {
-    const userExsists = await authService.getUser(userName);
+    const userExsists = await authService.getUser(email);
 
     delete userExsists.password;
 

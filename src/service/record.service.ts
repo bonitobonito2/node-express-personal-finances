@@ -52,9 +52,9 @@ export class RecordService {
     return records;
   }
 
-  public async getAllRecords(userName: string, data: Parameter) {
+  public async getAllRecords(email: string, data: Parameter) {
     const userService = new AuthService();
-    const user = await userService.getUser(userName);
+    const user = await userService.getUser(email);
 
     try {
       const categories = await this.categoryRepo.find({
