@@ -14,6 +14,7 @@ CategoryRouter.use((req, res, next) => {
   next();
 });
 
+console.log(3);
 CategoryRouter.post("/create", createCategoryValidate, createCategory);
 
 CategoryRouter.put(

@@ -44,6 +44,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
+console.log(1);
 app.use("/auth", authRouter);
 
 app.use(validateToken);

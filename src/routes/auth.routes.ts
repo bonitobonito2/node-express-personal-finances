@@ -11,6 +11,7 @@ import { changePasswordValidate } from "../requestValidations/auth/changePasswor
 
 const authRouter = express.Router();
 
+console.log(2);
 authRouter.post("/registration", validateRegistration, registration);
 
 authRouter.post("/login", loginValidation, login);
