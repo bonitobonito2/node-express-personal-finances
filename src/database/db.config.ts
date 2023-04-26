@@ -14,10 +14,10 @@ export const myDataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   entities: [User, Category, Records],
   synchronize: true,
-  extra: {
-    ssl: true,
-    sslmode: "require",
-  },
+  // extra: {
+  //   ssl: true,
+  //   sslmode: "require",
+  // },
 });
 
 // postgres://bonitobonito2:QsS3jlkdyCR5@ep-wispy-term-125918.eu-central-1.aws.neon.tech/neondb

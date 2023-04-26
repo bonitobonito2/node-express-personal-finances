@@ -1,5 +1,4 @@
 import { createTransport } from "nodemailer";
-import { google } from "googleapis";
 
 export const sendMeil = async (
   reciverMeil: string,

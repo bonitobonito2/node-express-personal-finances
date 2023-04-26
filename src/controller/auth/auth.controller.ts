@@ -3,16 +3,17 @@ import { sendMeil } from "../../helper/sendMeil";
 import { AuthService } from "../../service/auth.service";
 
 import jwt from "jsonwebtoken";
+import {
+  getTokenForAuthentificaion,
+  getTokenForValidation,
+} from "../../helper/tokens";
 export const registration: RequestHandler = async (request, response, next) => {
   const email = request.body["email"];
   const password = request.body["password"];
   const authService = new AuthService();
 
   const userExsists = await authService.getUser(email);
-  const token = jwt.sign({ email: email }, "topSecret21", {
-    expiresIn: "900000",
-  });
-
+  const token = getTokenForValidation(email);
   if (userExsists && userExsists.verifed) {
     return response.status(404).json("user with this email already exsists");
   } else if (userExsists && !userExsists.verifed) {
@@ -44,21 +45,23 @@ export const login: RequestHandler = async (request, response, next) => {
   if (!userExsists) {
     return response.json("user doesnot exsists");
   }
+  if (!userExsists.verifed) {
+    const token = getTokenForValidation(email);
+
+    await sendMeil(email, "xdsadsad", token);
+    return response.json(
+      "user is not verifed, we sent u validation on email once again"
+    );
+  }
   if (userExsists.password == password) {
-    const token = jwt.sign({ email: userExsists.email }, "topSecret21", {
-      expiresIn: "1d",
-    });
+    const token = getTokenForAuthentificaion(email);
     return response.json({ succses: true, token: token });
   } else {
     return response.status(404).json("incorrect password");
   }
 };
 
-export const changePassword: RequestHandler = async (
-  request,
-  response,
-  next
-) => {
+export const changePassword: RequestHandler = async (request, response) => {
   const gmail = request.body["gmail"];
   const currentPassword = request.body["currentPassword"];
   const newPassword = request.body["newPassword"];
@@ -87,7 +90,7 @@ export const verifeEmail: RequestHandler = async (request, response, next) => {
   try {
     const decoded = jwt.verify(token, "topSecret21");
     const email = decoded["email"];
-    const verifeEmail = await authService.verifeEmail(email);
+    await authService.verifeEmail(email);
     return response.json("email verifed");
   } catch (err) {
     throw new err("something went wrong");
